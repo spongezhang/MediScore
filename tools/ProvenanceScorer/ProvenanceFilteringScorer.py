@@ -122,17 +122,21 @@ if __name__ == '__main__':
         system_output_index = system_output_index.query("ProvenanceProbeStatus == ['Processed', 'N']")
 
     trial_index_ref = merge(trial_index, ref_file, on = "ProvenanceProbeFileID")
+    print(trial_index_ref[:1])
+    print('hahaha')
     trial_index_ref_sysout = merge(trial_index_ref, system_output_index, on = "ProvenanceProbeFileID")
-
+    print(trial_index_ref_sysout[:1])
     world_nodes = merge(nodes_file, world_index, on = ["WorldFileID", "WorldFileName"], how = "inner")
 
     output_records = []
     output_mapping_records = []
-
+    print('hahaha')
+    #print(trial_index_ref_sysout)
+    #print(trial_index_ref_sysout.groupby("JournalFileName"))
     for journal_fn, trial_index_ref_sysout_items in trial_index_ref_sysout.groupby("JournalFileName"):
+        #print(journal_fn)
         journal_path = os.path.join(abs_reference_dir, journal_fn)
         journal = load_json(journal_path)
-
         journal_node_lookup = {}
         for n in journal["nodes"]:
             journal_node_lookup[n["id"]] = n
@@ -143,7 +147,12 @@ if __name__ == '__main__':
 
             ref_nodes_dict = {}
             for n in world_nodes[world_nodes.ProvenanceProbeFileID == trial.ProvenanceProbeFileID].itertuples():
+                #try:
                 ref_nodes_dict[n.WorldFileName] = journal_node_lookup[n.JournalNodeID]
+                #except Exception as e:
+                #    print(e)
+                #    print(trial.ProvenanceProbeFileID, trial.JournalName)
+                #    print((n.WorldFileName,n.JournalNodeID))
 
             # This should only add a single node, the probe node,
             # doing this in a loop because Pandas
