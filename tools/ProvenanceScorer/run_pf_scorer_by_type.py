@@ -53,6 +53,9 @@ if __name__ == '__main__':
     parser.add_argument("--dbname", nargs='?', type=str, default = 'NC2017_Dev1_Beta4',
                         help="Database dataset name")
 
+    parser.add_argument("--index_name", nargs='?', type=str, default = 'NC2017_Dev1',
+                        help="Database dataset name")
+
     parser.add_argument("--root_dir", nargs='?', type=str, default = '/home/xuzhang/project/Medifor/data/',
                         help="Directory where dataset stores")
 
@@ -61,7 +64,7 @@ if __name__ == '__main__':
             help="Directory where index file stores")
 
     parser.add_argument("--more_index_dir", nargs='?', type=str,\
-            default = '/home/xuzhang/project/Medifor/code/provenance-filtering/data/',
+            default = '/home/xuzhang/project/Medifor/data/',
             help="Directory where index file stores")
 
     parser.add_argument("--suffix", nargs='?', type=str,\
@@ -73,11 +76,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     
-    if 'MFC18' in args.dbname or 'NC2017' in args.dbname:
-        ndataset_list = args.dbname.split('_')
-        index_name = ndataset_list[0]+'_'+ndataset_list[1]
-    else:
-        index_name = args.dbname
+    index_name = args.index_name
 
     root_dir = args.root_dir + args.dbname + '/'
     more_index_dir = args.more_index_dir + args.dbname + '/'

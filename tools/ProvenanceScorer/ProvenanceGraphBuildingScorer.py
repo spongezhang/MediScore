@@ -390,10 +390,10 @@ if __name__ == '__main__':
         except IOError as ioerr:
             err_quit("{}. Aborting!".format(ioerr))
 
-    _write_df_to_csv("Trial Scores", output_records_df, "trial_scores.csv")
-    _write_df_to_csv("Aggregate Scores", output_agg_records_df, "scores.csv")
-    _write_df_to_csv("Node Mapping", output_node_mapping_records_df, "node_mapping.csv")
-    _write_df_to_csv("Link Mapping", output_link_mapping_records_df, "link_mapping.csv")
+    _write_df_to_csv("Trial Scores", output_records_df, os.path.join(args.output_dir, "trial_scores.csv"))
+    _write_df_to_csv("Aggregate Scores", output_agg_records_df, os.path.join(args.output_dir,"scores.csv"))
+    _write_df_to_csv("Node Mapping", output_node_mapping_records_df, os.path.join(args.output_dir,"node_mapping.csv"))
+    _write_df_to_csv("Link Mapping", output_link_mapping_records_df, os.path.join(args.output_dir,"link_mapping.csv"))
 
     if args.html_report == True:
         try:

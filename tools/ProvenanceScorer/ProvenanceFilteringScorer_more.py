@@ -48,31 +48,41 @@ def system_out_to_ordered_nodes(system_out):
 
 def build_provenancefiltering_agg_output_df():
     df = pd.DataFrame(columns=[
+                               "MeanAP",
                                "MeanNodeRecall@50",
                                "MeanNodeRecall@100",
                                "MeanNodeRecall@200",
+                               "MeanNodeRecall@300",
                                "BaseMeanNodeRecall@50",
                                "BaseMeanNodeRecall@100",
                                "BaseMeanNodeRecall@200",
+                               "BaseMeanNodeRecall@300",
                                "DonorMeanNodeRecall@50",
                                "DonorMeanNodeRecall@100",
                                "DonorMeanNodeRecall@200",
+                               "DonorMeanNodeRecall@300",
                                "InterMeanNodeRecall@50",
                                "InterMeanNodeRecall@100",
-                               "InterMeanNodeRecall@200"
+                               "InterMeanNodeRecall@200",
+                               "InterMeanNodeRecall@300"
                                ])
-    dtypes = { "MeanNodeRecall@50": float,
+    dtypes = { "MeanAP": float,
+               "MeanNodeRecall@50": float,
                "MeanNodeRecall@100": float,
                "MeanNodeRecall@200": float,
+               "MeanNodeRecall@300": float,
                "BaseMeanNodeRecall@50": float,
                "BaseMeanNodeRecall@100": float,
                "BaseMeanNodeRecall@200": float,
+               "BaseMeanNodeRecall@300": float,
                "DonorMeanNodeRecall@50": float,
                "DonorMeanNodeRecall@100": float,
                "DonorMeanNodeRecall@200": float,
+               "DonorMeanNodeRecall@300": float,
                "InterMeanNodeRecall@50": float,
                "InterMeanNodeRecall@100": float,
-               "InterMeanNodeRecall@200": float
+               "InterMeanNodeRecall@200": float,
+               "InterMeanNodeRecall@300": float
                }
 
     # Setting column data type one by one as pandas doesn't offer a
@@ -88,35 +98,44 @@ def build_provenancefiltering_output_df():
                                "ProvenanceOutputFileName",
                                "NumSysNodes",
                                "NumRefNodes",
+                               "MeanAP",
                                "NodeRecall@50",
                                "NodeRecall@100",
                                "NodeRecall@200",
+                               "NodeRecall@300",
                                "BaseNodeRecall@50", 
                                "BaseNodeRecall@100",
                                "BaseNodeRecall@200",
+                               "BaseNodeRecall@300",
                                "DonorNodeRecall@50",
                                "DonorNodeRecall@100",
                                "DonorNodeRecall@200",
+                               "DonorNodeRecall@300",
                                "InterNodeRecall@50",
                                "InterNodeRecall@100",
-                               "InterNodeRecall@200" ])
+                               "InterNodeRecall@200",
+                               "InterNodeRecall@300" ])
     dtypes = { "JournalName": str,
                "ProvenanceProbeFileID": str,
                "ProvenanceOutputFileName": str,
                "NumSysNodes": int,
                "NumRefNodes": int,
+               "MeanAP": float,
                "NodeRecall@50": float,
                "NodeRecall@100": float,
                "NodeRecall@200": float,
                "BaseNodeRecall@50": float,
                "BaseNodeRecall@100": float,
                "BaseNodeRecall@200": float,
+               "BaseNodeRecall@300": float,
                "DonorNodeRecall@50": float,
                "DonorNodeRecall@100": float,
                "DonorNodeRecall@200": float,
+               "DonorNodeRecall@300": float,
                "InterNodeRecall@50": float,
                "InterNodeRecall@100": float,
-               "InterNodeRecall@200": float }
+               "InterNodeRecall@200": float,
+               "InterNodeRecall@300": float }
 
     # Setting column data type one by one as pandas doesn't offer a
     # convenient way to do this
@@ -201,14 +220,16 @@ if __name__ == '__main__':
         world_set_nodes.add(probe_node_wfn)
 
         ordered_sys_nodes = system_out_to_ordered_nodes(system_out)
-
+        
+        sys_nodes_list = [node.file for node in ordered_sys_nodes]
         out_rec = { "JournalName": trial.JournalName,
                     "ProvenanceProbeFileID": trial.ProvenanceProbeFileID,
                     "ProvenanceOutputFileName": trial.ProvenanceOutputFileName,
                     "NumSysNodes": len(ordered_sys_nodes),
-                    "NumRefNodes": len(world_set_nodes) }
+                    "NumRefNodes": len(world_set_nodes), 
+                    "MeanAP": node_map(world_set_nodes, sys_nodes_list)}
 
-        for n in [ 50, 100, 200 ]:
+        for n in [ 50, 100, 200, 300]:
             sys_nodes_at_n = { node.file for node in ordered_sys_nodes[0:n] }
             out_rec.update({
                              "DonorNodeRecall@{}".format(n): node_recall(donor_world_set_nodes, sys_nodes_at_n),
@@ -220,18 +241,22 @@ if __name__ == '__main__':
 
     output_agg_records = build_provenancefiltering_agg_output_df()
     aggregated = { 
+                   "MeanAP": output_records["MeanAP"].mean(),
                    "DonorMeanNodeRecall@50": output_records["DonorNodeRecall@50"].mean(),
                    "DonorMeanNodeRecall@100": output_records["DonorNodeRecall@100"].mean(),
                    "DonorMeanNodeRecall@200": output_records["DonorNodeRecall@200"].mean(),
+                   "DonorMeanNodeRecall@300": output_records["DonorNodeRecall@300"].mean(),
                    "BaseMeanNodeRecall@50": output_records["BaseNodeRecall@50"].mean(),
                    "BaseMeanNodeRecall@100": output_records["BaseNodeRecall@100"].mean(),
                    "BaseMeanNodeRecall@200": output_records["BaseNodeRecall@200"].mean(),
+                   "BaseMeanNodeRecall@300": output_records["BaseNodeRecall@300"].mean(),
                    "InterMeanNodeRecall@50": output_records["InterNodeRecall@50"].mean(),
                    "InterMeanNodeRecall@100": output_records["InterNodeRecall@100"].mean(),
-                   "InterMeanNodeRecall@200": output_records["InterNodeRecall@200"].mean(),
+                   "InterMeanNodeRecall@300": output_records["InterNodeRecall@300"].mean(),
                    "MeanNodeRecall@50": output_records["NodeRecall@50"].mean(),
                    "MeanNodeRecall@100": output_records["NodeRecall@100"].mean(),
                    "MeanNodeRecall@200": output_records["NodeRecall@200"].mean(),
+                   "MeanNodeRecall@300": output_records["NodeRecall@300"].mean(),
                 }
     output_agg_records = output_agg_records.append(pd.Series(aggregated), ignore_index=True)
 
