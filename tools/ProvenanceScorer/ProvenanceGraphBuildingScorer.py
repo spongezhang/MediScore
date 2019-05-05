@@ -50,7 +50,7 @@ def antiforensic_donor_filter(edge_list):
     ins = group_by_fun(lambda e: e["target"], edge_list)
 
     def _filter(edge):
-        return edge["op"] == "Donor" and len(filter(lambda e: e["op"][0:12] == "AntiForensic", ins.get(edge["target"], []))) > 0
+        return edge["op"] == "Donor" and len(list(filter(lambda e: e["op"][0:12] == "AntiForensic", ins.get(edge["target"], [])))) > 0
 
     return map(_filter, edge_list)
 

@@ -13,4 +13,18 @@ def SimLO(edgeset_1, edgeset_2):
     return set_similarity_overlap(edgeset_1, edgeset_2)
 
 def node_recall(ref_nodeset, sys_nodeset):
+    if len(ref_nodeset)==0:
+        return -1.0
     return np.float64(len(ref_nodeset & sys_nodeset)) / len(ref_nodeset)
+
+def node_map(ref_nodeset, sys_nodeset):
+    gt_number = len(ref_nodeset)
+    total_count = 0
+    right_count = 0
+    ap = 0.0
+    for node in sys_nodeset:
+        total_count+=1
+        if node in ref_nodeset:
+            right_count+=1
+            ap = ap + right_count/float(total_count)/float(gt_number)
+    return np.float64(ap)

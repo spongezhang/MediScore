@@ -68,9 +68,6 @@ if __name__ == '__main__':
             default = '',
             help="Directory where index file stores")
 
-    parser.add_argument("--setting", nargs='?', type=str, default = '',
-                        help="Directory where index file stores")
-
     args = parser.parse_args()
     
     if 'MFC18' in args.dbname or 'NC2017' in args.dbname:
