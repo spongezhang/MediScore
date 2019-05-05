@@ -213,7 +213,7 @@ if __name__ == '__main__':
                         { k for k, r, s in filter(_miss_selector, node_mapping) },
                         { k for k, r, s in filter(_fa_selector, node_mapping) })
 
-            for n in [ 50, 100, 200 ]:
+            for n in [ 50, 100, 200, 300]:
                 sys_nodes_at_n = { node.file for node in ordered_sys_nodes[0:n] }
 
                 sys_nodes_dict = { n: full_sys_nodes_dict[n] for n in sys_nodes_at_n }
@@ -254,15 +254,21 @@ if __name__ == '__main__':
                                                              "NumCorrectNodesAt200",
                                                              "NumMissingNodesAt200",
                                                              "NumFalseAlarmNodesAt200",
+                                                             "NumCorrectNodesAt300",
+                                                             "NumMissingNodesAt300",
+                                                             "NumFalseAlarmNodesAt300",
                                                              "NodeRecallAt50",
                                                              "NodeRecallAt100",
-                                                             "NodeRecallAt200"])
+                                                             "NodeRecallAt200",
+                                                             "NodeRecallAt300"])
     aggregated = [{ "MeanNodeRecallAt50": output_records_df["NodeRecallAt50"].mean(),
                     "MeanNodeRecallAt100": output_records_df["NodeRecallAt100"].mean(),
-                    "MeanNodeRecallAt200": output_records_df["NodeRecallAt200"].mean() }]
+                    "MeanNodeRecallAt200": output_records_df["NodeRecallAt200"].mean(),
+                    "MeanNodeRecallAt300": output_records_df["NodeRecallAt300"].mean()}]
     output_agg_records_df = DataFrame(aggregated, columns = ["MeanNodeRecallAt50",
                                                              "MeanNodeRecallAt100",
-                                                             "MeanNodeRecallAt200"])
+                                                             "MeanNodeRecallAt200",
+                                                             "MeanNodeRecallAt300"])
 
     mkdir_p(args.output_dir)
 
@@ -295,6 +301,7 @@ if __name__ == '__main__':
                                                                            "NodeRecallAt50",
                                                                            "NodeRecallAt100",
                                                                            "NodeRecallAt200",
+                                                                           "NodeRecallAt300",
                                                                            "NumSysNodes",
                                                                            "NumRefNodes",
                                                                            "NumCorrectNodesAt50",
@@ -305,6 +312,9 @@ if __name__ == '__main__':
                                                                            "NumFalseAlarmNodesAt100",
                                                                            "NumCorrectNodesAt200",
                                                                            "NumMissingNodesAt200",
-                                                                           "NumFalseAlarmNodesAt200"])
+                                                                           "NumFalseAlarmNodesAt200",
+                                                                           "NumCorrectNodesAt300",
+                                                                           "NumMissingNodesAt300",
+                                                                           "NumFalseAlarmNodesAt300"])
         except IOError as ioerr:
             err_quit("{}. Aborting!".format(ioerr))

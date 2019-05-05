@@ -125,6 +125,6 @@ if __name__ == '__main__':
     		   + " -R {}".format(reference_dir) \
     		   + " -s {}".format(system_output_file) \
     		   + " -S {}".format(system_output_dir) 
-                   #+ " -H -T {} -p -t -c ".format(output_directory + '../thumbnail/')
+                   # + " -H -T {} -p -t -c ".format(output_directory + '../thumbnail/')
 
     subprocess.call(extract_command,shell=True)

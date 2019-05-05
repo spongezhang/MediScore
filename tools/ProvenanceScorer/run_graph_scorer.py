@@ -88,7 +88,7 @@ if __name__ == '__main__':
                         help="Directory where dataset stores")
 
     parser.add_argument("--output_dir", nargs='?', type=str,\
-            default = '/home/xuzhang/project/Medifor/code/provenance-filtering/Model_Training/',
+            default = '/home/xuzhang/project/Medifor/code/Genealogy_Graph_Building/',
             help="Directory where index file stores")
 
     parser.add_argument("--setting", nargs='?', type=str, default = '',
@@ -113,7 +113,7 @@ if __name__ == '__main__':
     reference_dir = root_dir 
     system_output_file = system_output_dir + 'output.csv'
 
-    extract_command = "python ./ProvenanceGraphBuildngScorer.py "\
+    extract_command = "python ./ProvenanceGraphBuildingScorer.py "\
                    + " -o {}".format(output_directory) \
     		   + " -x {}".format(index_file) \
     		   + " -r {}".format(reference_file) \

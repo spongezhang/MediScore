@@ -81,18 +81,26 @@ def usage():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     
-    parser.add_argument("--dbname", nargs='?', type=str, default = 'MFC18_Dev1_Ver2',
+    parser.add_argument("--dbname", nargs='?', type=str, default = 'NC2017_Dev1_Beta4',
                         help="Database dataset name")
 
     parser.add_argument("--root_dir", nargs='?', type=str, default = '/home/xuzhang/project/Medifor/data/',
                         help="Directory where dataset stores")
 
     parser.add_argument("--output_dir", nargs='?', type=str,\
-            default = '/home/xuzhang/project/Medifor/code/provenance-filtering/Model_Training/',
+            default = '/home/xuzhang/project/Medifor/code/API_templates/provenance/tutorial/',
+            help="Directory where index file stores")
+
+    parser.add_argument("--more_index_dir", nargs='?', type=str,\
+            default = '/home/xuzhang/project/Medifor/data/',
             help="Directory where index file stores")
 
     parser.add_argument("--setting", nargs='?', type=str, default = '',
                         help="Directory where index file stores")
+    
+    parser.add_argument("--suffix", nargs='?', type=str,\
+            default = 'sift',
+            help="Directory where index file stores")
 
     args = parser.parse_args()
     
@@ -103,24 +111,37 @@ if __name__ == '__main__':
         index_name = args.dbname
 
     root_dir = args.root_dir + args.dbname + '/'
-    system_output_dir = args.output_dir + 'output/' + args.dbname + '/'
-
+    system_output_dir = args.output_dir + 'filtering_results/' + '/'
+    more_index_dir = args.more_index_dir + args.dbname + '/'
     output_directory = args.output_dir + 'score/{}/'.format(args.dbname)
+
+    try:
+        os.stat(output_directory)
+    except:
+        os.makedirs(output_directory)
+
     index_file = root_dir + 'indexes/' + index_name + '-provenancefiltering-index.csv'
     reference_file = root_dir + 'reference/provenancefiltering/' + index_name + '-provenancefiltering-ref.csv'
     reference_node_file = root_dir + 'reference/provenancefiltering/' + index_name + '-provenancefiltering-ref-node.csv'
+    base_reference_node_file = more_index_dir + 'reference/provenancefiltering/' + index_name + '-provenancefiltering-base-ref-node.csv'
+    donor_reference_node_file = more_index_dir + 'reference/provenancefiltering/' + index_name + '-provenancefiltering-donor-ref-node.csv'
+    inter_reference_node_file = more_index_dir + 'reference/provenancefiltering/' + index_name + '-provenancefiltering-inter-ref-node.csv'
     world_file = root_dir + 'indexes/' + index_name + '-provenancefiltering-world.csv'
     reference_dir = root_dir 
     system_output_file = system_output_dir + 'output.csv'
 
-    extract_command = "python ./ProvenanceFilteringScorer.py "\
+    extract_command = "python ./ProvenanceFilteringScorer_more.py "\
                    + " -o {}".format(output_directory) \
     		   + " -x {}".format(index_file) \
     		   + " -r {}".format(reference_file) \
     		   + " -n {}".format(reference_node_file) \
+                   + " -b {}".format(base_reference_node_file) \
+                   + " -d {}".format(donor_reference_node_file) \
+                   + " -i {}".format(inter_reference_node_file) \
     		   + " -w {}".format(world_file) \
     		   + " -R {}".format(reference_dir) \
     		   + " -s {}".format(system_output_file) \
-    		   + " -S {}".format(system_output_dir)
+    		   + " -S {}".format(system_output_dir) \
+                   + " -a {}".format(args.suffix)
 
     subprocess.call(extract_command,shell=True)

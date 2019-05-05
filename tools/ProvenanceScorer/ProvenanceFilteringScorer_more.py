@@ -93,9 +93,6 @@ def build_provenancefiltering_output_df():
                                "InterNodeRecall@300" ])
     dtypes = { "JournalName": str,
                "ProvenanceProbeFileID": str,
-               #"ProvenanceOutputFileName": str,
-               #"NumSysNodes": int,
-               #"NumRefNodes": int,
                "MeanAP": float,
                "NodeRecall@200": float,
                "NodeRecall@300": float,
@@ -193,9 +190,6 @@ if __name__ == '__main__':
         sys_nodes_list = [node.file for node in ordered_sys_nodes]
         out_rec = { "JournalName": trial.JournalName,
                     "ProvenanceProbeFileID": trial.ProvenanceProbeFileID,
-                    #"ProvenanceOutputFileName": trial.ProvenanceOutputFileName,
-                    #"NumSysNodes": len(ordered_sys_nodes),
-                    #"NumRefNodes": len(world_set_nodes), 
                     "MeanAP": node_map(world_set_nodes, sys_nodes_list)}
 
         for n in [ 200, 300]:

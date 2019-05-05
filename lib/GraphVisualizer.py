@@ -1,11 +1,14 @@
 import os
-import pydot
+import pydot_ng as pydot
 import cv2
+import numpy as np
 
 def generate_thumbnail(input_fn, output_fn, height = 64):
     # Resize to fixed height while preserving aspect ratio
     if not os.path.isfile(output_fn):
         input_img = cv2.imread(input_fn)
+        if input_img is None:
+            input_img = np.zeros((64,64,3), dtype = np.uint8)
 
         scale = float(height) / input_img.shape[0]
         out_dims = (int(input_img.shape[1] * scale), height)
@@ -61,15 +64,31 @@ def render_provenance_graph_from_mapping(probe_node, correct_nodes, fa_nodes, mi
 
         if ref_dir is not None:
             img_path = os.path.join(ref_dir, node_id)
-            
             if os.path.isfile(img_path):
                 # Generate thumbnail
-                output_thumb_fn = os.path.join(thumb_dir, "{}_thumb{}".format(basename, ".jpg"))
+                output_thumb_fn = os.path.join(thumb_dir, "{}_thumb{}".format(basename, ".png"))
                 generate_thumbnail(img_path, output_thumb_fn)
                 
                 return "<<TABLE border=\"0\" cellborder=\"0\"><TR><TD><IMG src=\"{}\"/></TD></TR><TR><TD>{}</TD></TR></TABLE>>".format(output_thumb_fn, node_name)
+        else:
+            new_ref_dir ="/".join(ref_dir.split('/')[:-1])
+            img_path = os.path.join(new_ref_dir, node_id)
+            if os.path.isfile(img_path):
+                output_thumb_fn = os.path.join(thumb_dir, "{}_thumb{}".format(basename, ".png"))
+                generate_thumbnail(img_path, output_thumb_fn)
+                return "<<TABLE border=\"0\" cellborder=\"0\"><TR><TD><IMG src=\"{}\"/></TD></TR><TR><TD>{}</TD></TR></TABLE>>".format(output_thumb_fn, node_name)
+
 
         return node_name
+
+    def _generate_image_name(node_id):
+        node_name = os.path.basename(node_id)
+        basename, ext = os.path.splitext(node_name)
+
+        img_path = os.path.join(ref_dir, node_id)
+        output_thumb_fn = os.path.join(thumb_dir, "{}_thumb{}".format(basename, ".png"))
+
+        return output_thumb_fn
 
     def _generate_penwidth(node_id):
         node_name = os.path.basename(node_id)
@@ -78,8 +97,7 @@ def render_provenance_graph_from_mapping(probe_node, correct_nodes, fa_nodes, mi
         return "5" if basename == probe_node else "1"
         
     def generate_node_properties(node_id, color="black"):
-        return { "color": color, "label": _generate_label(node_id), "penwidth": _generate_penwidth(node_id) }
-    
+        return { "color": color, "label": _generate_label(node_id),  "penwidth": _generate_penwidth(node_id) }
     nodes = ([ (n, generate_node_properties(n, correct_color)) for n in correct_nodes ] +
              [ (n, generate_node_properties(n, fa_color)) for n in fa_nodes ] +
              [ (n, generate_node_properties(n, missing_color)) for n in missing_nodes ])
@@ -87,6 +105,5 @@ def render_provenance_graph_from_mapping(probe_node, correct_nodes, fa_nodes, mi
     edges = ([ (s, t, { "color": correct_color }) for s, t in correct_edges ] +
              [ (s, t, { "color": fa_color }) for s, t in fa_edges ] +
              [ (s, t, { "color": missing_color }) for s, t in missing_edges ])
-
     render_provenance_graph(nodes, edges, output_fn)
     

@@ -15,6 +15,7 @@ Examples:
 
 
 from __future__ import print_function
+from urllib import urlretrieve
 import os, sys, errno, json, requests, argparse
 import csv
 import pandas as pd
@@ -43,8 +44,8 @@ if __name__ == '__main__':
     dataset_index =  args.dataset_index
 
     #read previous reference files
-    probe_index_file = load_csv(open('{}{}/reference/provenancefiltering/{}-provenancefiltering-ref.csv'.format(root_dir, dataset_name, dataset_index), 'r'), '|')
-    node_file = load_csv(open('{}{}/reference/provenancefiltering/{}-provenancefiltering-ref-node.csv'.format(root_dir, dataset_name, dataset_index), 'r'), '|')
+    probe_index_file = load_csv(open('{}{}/reference/provenancefiltering/{}-provenancefiltering-ref.csv'.format(root_dir, dataset_name, dataset_index), 'rb'), '|')
+    node_file = load_csv(open('{}{}/reference/provenancefiltering/{}-provenancefiltering-ref-node.csv'.format(root_dir, dataset_name, dataset_index), 'rb'), '|')
     node_dict = {}
     
     #build a dict for fast reference, deal with inconsistency between NodeWorldID and NodeJournalID
@@ -53,19 +54,19 @@ if __name__ == '__main__':
 
     #result file, which follow the old ref node format
     base_ref_node_file = csv.writer(open('{}{}/reference/provenancefiltering/{}-provenancefiltering-base-ref-node.csv'.format(root_dir, dataset_name, dataset_index),
-        'w'), delimiter='|')
+        'wb'), delimiter='|')
     base_ref_node_file.writerow(['ProvenanceProbeFileID','WorldFileID','WorldFileName','JournalNodeID'])
 
     donor_ref_node_file = csv.writer(open('{}{}/reference/provenancefiltering/{}-provenancefiltering-donor-ref-node.csv'.format(root_dir,dataset_name,dataset_index),
-        'w'), delimiter='|')
+        'wb'), delimiter='|')
     donor_ref_node_file.writerow(['ProvenanceProbeFileID','WorldFileID','WorldFileName','JournalNodeID'])
 
     inter_ref_node_file = csv.writer(open('{}{}/reference/provenancefiltering/{}-provenancefiltering-inter-ref-node.csv'.format(root_dir,dataset_name,dataset_index),
-        'w'), delimiter='|')
+        'wb'), delimiter='|')
     inter_ref_node_file.writerow(['ProvenanceProbeFileID','WorldFileID','WorldFileName','JournalNodeID'])
 
     final_ref_node_file = csv.writer(open('{}{}/reference/provenancefiltering/{}-provenancefiltering-final-ref-node.csv'.format(root_dir,dataset_name,dataset_index),
-        'w'), delimiter='|')
+        'wb'), delimiter='|')
     final_ref_node_file.writerow(['ProvenanceProbeFileID','WorldFileID','WorldFileName','JournalNodeID'])
 
     for probe_id, journal_file_name in tqdm(zip(probe_index_file["ProvenanceProbeFileID"], probe_index_file['JournalFileName'])):
